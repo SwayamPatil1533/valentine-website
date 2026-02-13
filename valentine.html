@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>For My Love 💖</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@600&family=Poppins:wght@300;400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+<style>
+:root {
+  --pink: #ffd6e8;
+  --lavender: #e4c1f9;
+  --sky: #cde7ff;
+  --white: #ffffff;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, var(--pink), var(--lavender), var(--sky));
+  height: 100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  overflow:hidden;
+  text-align:center;
+  color:#444;
+  position:relative;
+}
+
+/* floating sparkles */
+.sparkle {
+  position:absolute;
+  font-size:12px;
+  opacity:0.6;
+  animation: sparkleFloat 6s linear infinite;
+}
+
+@keyframes sparkleFloat {
+  from { transform: translateY(100vh); opacity:1; }
+  to { transform: translateY(-10vh); opacity:0; }
+}
+
+.container {
+  z-index:2;
+  padding:30px;
+}
+
+h1 {
+  font-family:'Dancing Script', cursive;
+  font-size:2.7rem;
+  margin-bottom:10px;
+  color:#6a4c93;
+}
+
+#countdown {
+  margin-bottom:25px;
+  font-size:0.95rem;
+  opacity:0.8;
+}
+
+button {
+  padding:12px 28px;
+  border:none;
+  border-radius:30px;
+  font-size:1rem;
+  margin:10px;
+  cursor:pointer;
+  transition:0.3s ease;
+}
+
+#yesBtn {
+  background:#ff9ecf;
+  color:white;
+  box-shadow:0 0 20px rgba(255,158,207,0.8);
+  animation:pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform:scale(1); }
+  50% { transform:scale(1.07); }
+  100% { transform:scale(1); }
+}
+
+#noBtn {
+  background:white;
+}
+
+button:hover { transform:scale(1.08); }
+
+/* Modal */
+.modal {
+  position:fixed;
+  inset:0;
+  backdrop-filter:blur(8px);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:5;
+}
+
+.modal-content {
+  background:rgba(255,255,255,0.7);
+  padding:25px;
+  border-radius:20px;
+  width:90%;
+  max-width:350px;
+  box-shadow:0 10px 40px rgba(0,0,0,0.2);
+  animation:fadeIn 0.6s ease forwards;
+}
+
+@keyframes fadeIn {
+  from { opacity:0; transform:translateY(20px); }
+  to { opacity:1; transform:translateY(0); }
+}
+
+.modal h2 {
+  font-family:'Dancing Script', cursive;
+  margin-bottom:10px;
+}
+
+.modal button {
+  margin-top:15px;
+  background:#ff9ecf;
+  color:white;
+}
+
+/* Image section */
+#imageSection {
+  margin-top:25px;
+  display:none;
+}
+
+#imageSection img {
+  width:300px;
+  border-radius:25px;
+  box-shadow:0 0 40px rgba(255,255,255,0.9);
+  animation:zoom 6s ease infinite alternate;
+}
+
+@keyframes zoom {
+  from { transform:scale(1); }
+  to { transform:scale(1.05); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <h1 id="mainHeading"></h1>
+  <div id="countdown"></div>
+  <button id="yesBtn">Yes 💕</button>
+  <button id="noBtn">No 💔</button>
+
+  <div id="imageSection">
+    <img src="couple.jpeg" alt="Our Photo">
+  </div>
+</div>
+
+<div class="modal" id="loveModal">
+  <div class="modal-content">
+    <h2>💌 My Sweetheart</h2>
+    <p id="loveLetter"></p>
+    <button onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<audio id="music" loop>
+  <source src="https://www.bensound.com/bensound-music/bensound-romantic.mp3">
+</audio>
+
+<script>
+const herName = "Sinchu"; // change this
+
+document.getElementById("mainHeading").innerHTML =
+  `Will you be my Valentine, ${herName}? 💖`;
+
+// Countdown
+function updateCountdown() {
+  const now = new Date();
+  const year = now.getFullYear();
+  let valentine = new Date(year,1,14);
+  if (now > valentine) valentine.setFullYear(year+1);
+
+  const diff = valentine - now;
+  const days = Math.floor(diff/(1000*60*60*24));
+  document.getElementById("countdown").innerText =
+    `⏳ ${days} days until our special day`;
+}
+setInterval(updateCountdown,1000);
+updateCountdown();
+
+// No button move
+const noBtn = document.getElementById("noBtn");
+noBtn.addEventListener("mouseover",()=>{
+  noBtn.style.position="absolute";
+  noBtn.style.left=Math.random()*(window.innerWidth-100)+"px";
+  noBtn.style.top=Math.random()*(window.innerHeight-50)+"px";
+});
+
+// Yes click
+document.getElementById("yesBtn").onclick=function(){
+  document.getElementById("music").play();
+  confetti({particleCount:180, spread:120, colors:['#ff9ecf','#e4c1f9','#cde7ff']});
+  document.getElementById("loveModal").style.display="flex";
+  typeLetter(`${herName}, you are my comfort, my soft place to fall, and my happiest memory every single day. I promise to love you gently, patiently, and endlessly. 💖`);
+};
+
+// typing effect
+function typeLetter(text){
+  const letter=document.getElementById("loveLetter");
+  letter.innerHTML="";
+  let i=0;
+  const typing=setInterval(()=>{
+    letter.innerHTML+=text.charAt(i);
+    i++;
+    if(i>=text.length) clearInterval(typing);
+  },40);
+}
+
+function closeModal(){
+  document.getElementById("loveModal").style.display="none";
+  document.getElementById("imageSection").style.display="block";
+}
+
+// floating sparkles
+setInterval(()=>{
+  const s=document.createElement("div");
+  s.className="sparkle";
+  s.innerHTML="✨";
+  s.style.left=Math.random()*window.innerWidth+"px";
+  document.body.appendChild(s);
+  setTimeout(()=>s.remove(),6000);
+},500);
+</script>
+
+</body>
+</html>
